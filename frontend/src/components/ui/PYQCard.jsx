@@ -36,12 +36,20 @@ const PYQCard = ({ paper, onView }) => {
           </button>
           
           {/* Download PDF Button */}
-          <button 
-            onClick={() => alert(`Downloading ${paper.subject} as PDF...`)}
-            className="flex-1 bg-blue-600 text-white py-2 rounded-xl text-sm font-bold shadow-md hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            📥 PDF
-          </button>
+          {paper.fileUrl ? (
+            <a 
+              href={paper.fileUrl.replace('/upload/', '/upload/fl_attachment/')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 bg-blue-600 text-white py-2 rounded-xl text-sm font-bold shadow-md hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              📥 PDF
+            </a>
+          ) : (
+            <span className="flex-1 bg-gray-300 text-gray-500 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-not-allowed">
+              📥 PDF
+            </span>
+          )}
         </div>
       </div>
     </div>

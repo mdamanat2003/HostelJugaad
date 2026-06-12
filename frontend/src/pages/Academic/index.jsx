@@ -284,29 +284,37 @@ const Academic = () => {
               <div className="w-full bg-gray-100 rounded-xl overflow-hidden border border-gray-200 flex items-center justify-center h-[60vh] md:h-[500px]">
                 
                 {/* PDF ya Image check karne ka logic */}
-                {viewPaper.imagePreview && viewPaper.imagePreview.toLowerCase().includes('.pdf') ? (
+                {viewPaper.fileUrl && viewPaper.fileUrl.toLowerCase().includes('.pdf') ? (
                   <iframe 
-                    src={viewPaper.imagePreview} 
+                    src={viewPaper.fileUrl} 
                     className="w-full h-full"
                     title="PDF Viewer"
-                  ></iframe>
-                ) : (
+                  />
+                ) : viewPaper.fileUrl ? (
                   <img 
-                    src={viewPaper.imagePreview} 
+                    src={viewPaper.fileUrl} 
                     alt="Question Paper Preview" 
                     className="max-w-full max-h-full object-contain"
                   />
+                ) : (
+                  <p className="text-red-500 font-medium">File not available</p>
                 )}
 
               </div>
               <div className="w-full flex justify-between items-center bg-blue-50 p-4 rounded-xl">
                 <span className="text-sm font-semibold text-blue-800">Need this for later?</span>
-                <button 
-                  onClick={() => alert(`Downloading ${viewPaper.subject} as PDF...`)}
+                {viewPaper.fileUrl ? (
+                <a 
+                  href={viewPaper.fileUrl.replace('/upload/', '/upload/fl_attachment/')}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-blue-700 transition-colors"
                 >
                   Download
-                </button>
+                </a>
+                ) : (
+                  <span className="text-sm text-gray-400 font-medium">No file to download</span>
+                )}
               </div>
             </div>
           )}
