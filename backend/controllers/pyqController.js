@@ -54,15 +54,16 @@ export const getPYQs = async (req, res) => {
     if (isSolved === 'false') query.isSolved = false;
 
     if (search) {
+      const sanitized = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 100);
       query.$or = [
-        { subject: { $regex: search, $options: 'i' } },
-        { code: { $regex: search, $options: 'i' } },
-        { course: { $regex: search, $options: 'i' } },
-        { branch: { $regex: search, $options: 'i' } },
+        { subject: { $regex: sanitized, $options: 'i' } },
+        { code: { $regex: sanitized, $options: 'i' } },
+        { course: { $regex: sanitized, $options: 'i' } },
+        { branch: { $regex: sanitized, $options: 'i' } },
       ];
     }
 
-    const pyqs = await PYQ.find(query).sort({ createdAt: -1 });
+    const pyqs = await PYQ.find(query).sort({ createdAt: -1 }).limit(100);
     res.status(200).json(pyqs);
   } catch (error) {
     console.error("Fetch PYQs Error:", error);

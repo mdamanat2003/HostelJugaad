@@ -132,14 +132,12 @@ const Academic = () => {
     isSolved: false,
   });
 
-  useEffect(() => {
-    fetchPYQs();
-  }, []);
+  const isFirstRender = useRef(true);
 
   const fetchPYQs = async (appliedFilters = {}) => {
     setLoading(true);
     try {
-      const response = await pyqAPI.getPYQs({ ...appliedFilters, search: searchQuery });
+      const response = await pyqAPI.getPYQs(appliedFilters);
       setPyqs(response.data);
       setError('');
     } catch (err) {
@@ -154,18 +152,23 @@ const Academic = () => {
     setFilters(updated);
   };
 
-  const applyFilters = () => {
+  const buildActiveFilters = () => {
     const activeFilters = {};
     Object.entries(filters).forEach(([k, v]) => {
       if (v) activeFilters[k] = v;
     });
     if (searchQuery) activeFilters.search = searchQuery;
-    fetchPYQs(activeFilters);
+    return activeFilters;
   };
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      fetchPYQs(buildActiveFilters());
+      return;
+    }
     const timer = setTimeout(() => {
-      applyFilters();
+      fetchPYQs(buildActiveFilters());
     }, 400);
     return () => clearTimeout(timer);
   }, [searchQuery, filters]);
@@ -213,7 +216,7 @@ const Academic = () => {
       setIsUploadModalOpen(false);
       setError('');
 
-      await fetchPYQs();
+      await fetchPYQs(buildActiveFilters());
     } catch (err) {
       setError(err.response?.data?.message || 'Upload failed');
     } finally {
