@@ -23,24 +23,34 @@ const Auth = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isLogin) {
-      console.log("Logging in...");
-      // Mock Login: User ka data localStorage mein save kar rahe hain
-      const userData = { 
-        name: formData.email.split('@')[0], // Email ka pehla hissa naam ki tarah le rahe hain
-        role: formData.studentType 
-      };
-      localStorage.setItem('hosteljugaad_user', JSON.stringify(userData));
-      
-      // Home page par redirect karein (reload ke sath taaki Navbar update ho jaye)
-      window.location.href = '/'; 
-    } else {
-      console.log("Registering...");
-      alert("Registration Successful! Please log in.");
-      // Registration successful hone ke baad form ko Login par switch kar dein
-      setIsLogin(true);
+    setLoading(true);
+    setError('');
+
+    try {
+      if (isLogin) {
+        const response = await authAPI.login({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        const { token, user } = response.data;
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('hosteljugaad_user', JSON.stringify(user));
+
+        window.location.href = '/';
+      } else {
+        await authAPI.register(formData);
+
+        setIsLogin(true);
+        setError('');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || (isLogin ? 'Login failed' : 'Registration failed'));
+    } finally {
+      setLoading(false);
     }
   };
 
