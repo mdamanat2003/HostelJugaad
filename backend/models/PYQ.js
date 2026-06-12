@@ -10,23 +10,45 @@ const pyqSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    course: {
+      type: String,
+      default: '',
+    },
+    branch: {
+      type: String,
+      default: '',
+    },
+    semester: {
+      type: String,
+      default: '',
+    },
     examType: {
       type: String,
       required: true,
+      enum: ['midsem1', 'midsem2', 'endsem', 'classtest', 'other'],
+      default: 'midsem1',
     },
     year: {
-      type: Number,
+      type: String,
       required: true,
     },
     fileUrl: {
       type: String,
-      required: true, // Yahan Cloudinary ka link save hoga
+      required: true,
     },
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Yeh reference hai ki kis student ne upload kiya
+      ref: 'User',
       required: true,
-    }
+    },
+    views: {
+      type: Number,
+      default: 0,
+    },
+    isSolved: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
