@@ -29,7 +29,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      if (error.response.status === 401) {
+      const requestUrl = error.config?.url || '';
+      const isAuthRoute = requestUrl.includes('/auth/');
+
+      if (error.response.status === 401 && !isAuthRoute) {
         localStorage.removeItem('authToken');
         localStorage.removeItem('hosteljugaad_user');
         localStorage.removeItem('user');
