@@ -17,6 +17,4 @@ cloudinary.config({
   api_secret: CLOUDINARY_API_SECRET,
 });
 
-console.log("☁️  Cloudinary Configuration Loaded Successfully!");
-
 export default cloudinary;
