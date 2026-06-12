@@ -8,6 +8,14 @@ const Navbar = () => {
 
   // Component load hote hi check karein ki koi logged in hai ya nahi
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      // Token nahi hai toh user logged in nahi hai
+      localStorage.removeItem('hosteljugaad_user');
+      localStorage.removeItem('user');
+      setUser(null);
+      return;
+    }
     try {
       const storedUser = localStorage.getItem('hosteljugaad_user');
       if (storedUser) {
@@ -20,9 +28,11 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     localStorage.removeItem('hosteljugaad_user');
     setUser(null);
-    window.location.href = '/auth'; // Wapas login page par bhej dein
+    window.location.href = '/auth';
   };
 
   const navLinks = [
