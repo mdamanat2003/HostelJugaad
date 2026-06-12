@@ -10,6 +10,10 @@ export const uploadPYQ = async (req, res) => {
       return res.status(400).json({ message: "Bhai, file toh select karo!" });
     }
 
+    if (!subject || !code || !examType || !year) {
+      return res.status(400).json({ message: "Required fields missing: subject, code, examType, year" });
+    }
+
     // Cloudinary ne jo file save ki hai, uska URL multer automatically req.file.path mein daal deta hai
     const fileUrl = req.file.path;
 
@@ -43,6 +47,7 @@ export const getPYQs = async (req, res) => {
     const pyqs = await PYQ.find().sort({ createdAt: -1 });
     res.status(200).json(pyqs);
   } catch (error) {
-    res.status(500).json({ message: "Server error fetching PYQs" });
+    console.error("Fetch PYQs Error:", error);
+    res.status(500).json({ message: "Server error fetching PYQs", error: error.message });
   }
 };

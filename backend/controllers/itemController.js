@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Item from '../models/Item.js';
 
 // Naya item add karne ka logic
@@ -60,6 +61,7 @@ export const getItems = async (req, res) => {
     const items = await Item.find(query).sort({ createdAt: -1 });
     res.status(200).json(items);
   } catch (error) {
+    console.error("Fetch Items Error:", error);
     res.status(500).json({ message: "Items fetch karne mein error", error: error.message });
   }
 };
@@ -68,6 +70,11 @@ export const getItems = async (req, res) => {
 export const getItemById = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid item ID format" });
+    }
+
     const item = await Item.findById(id).populate('sellerId', 'name email collegeName');
     
     if (!item) {
@@ -76,6 +83,7 @@ export const getItemById = async (req, res) => {
 
     res.status(200).json(item);
   } catch (error) {
+    console.error("Fetch Item Error:", error);
     res.status(500).json({ message: "Item fetch karne mein error", error: error.message });
   }
 };
@@ -85,6 +93,10 @@ export const deleteItem = async (req, res) => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid item ID format" });
+    }
 
     const item = await Item.findById(id);
     if (!item) {
@@ -99,6 +111,7 @@ export const deleteItem = async (req, res) => {
     await Item.findByIdAndDelete(id);
     res.status(200).json({ message: "Item delete ho gaya!" });
   } catch (error) {
+    console.error("Delete Item Error:", error);
     res.status(500).json({ message: "Delete karne mein error", error: error.message });
   }
 };
@@ -108,6 +121,10 @@ export const markAsSold = async (req, res) => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid item ID format" });
+    }
 
     const item = await Item.findById(id);
     if (!item) {
@@ -123,6 +140,7 @@ export const markAsSold = async (req, res) => {
 
     res.status(200).json({ message: "Item sold ho gaya!", item });
   } catch (error) {
+    console.error("Mark Sold Error:", error);
     res.status(500).json({ message: "Update karne mein error", error: error.message });
   }
 };

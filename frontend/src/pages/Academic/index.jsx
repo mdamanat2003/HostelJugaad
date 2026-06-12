@@ -53,7 +53,12 @@ const Academic = () => {
 
     setLoading(true);
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      let user = {};
+      try {
+        user = JSON.parse(localStorage.getItem('user') || '{}');
+      } catch {
+        localStorage.removeItem('user');
+      }
       
       const pyqPayload = {
         ...pyqForm,

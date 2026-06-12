@@ -2,10 +2,22 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET is not defined in environment variables');
+}
+
 // Register karne ka logic
 export const register = async (req, res) => {
   try {
     const { name, email, password, collegeName, studentType, rollNumber, hostelBlock, roomNumber } = req.body;
+
+    if (!name || !email || !password || !collegeName || !rollNumber) {
+      return res.status(400).json({ message: "Required fields missing: name, email, password, collegeName, rollNumber" });
+    }
+
+    if (studentType === 'Hosteler' && (!hostelBlock || !roomNumber)) {
+      return res.status(400).json({ message: "Hostelers must provide hostelBlock and roomNumber" });
+    }
 
     // Check karein ki email pehle se registered hai ya nahi
     const userExists = await User.findOne({ email });
@@ -33,7 +45,7 @@ export const register = async (req, res) => {
     // JWT token banna
     const token = jwt.sign(
       { userId: newUser._id, email: newUser.email },
-      process.env.JWT_SECRET || 'your_secret_key',
+      process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
 
@@ -59,6 +71,10 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
     // Check karein ki user database mein exist karata hai
     const user = await User.findOne({ email });
     if (!user) {
@@ -74,7 +90,7 @@ export const login = async (req, res) => {
     // JWT token banna
     const token = jwt.sign(
       { userId: user._id, email: user.email },
-      process.env.JWT_SECRET || 'your_secret_key',
+      process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
 
