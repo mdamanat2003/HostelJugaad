@@ -303,15 +303,18 @@ const Academic = () => {
               </div>
               <div className="w-full flex justify-between items-center bg-blue-50 p-4 rounded-xl">
                 <span className="text-sm font-semibold text-blue-800">Need this for later?</span>
+                {viewPaper.fileUrl ? (
                 <a 
-                  href={viewPaper.fileUrl}
+                  href={viewPaper.fileUrl.replace('/upload/', '/upload/fl_attachment/')}
                   target="_blank"
                   rel="noopener noreferrer"
-                  download
                   className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-blue-700 transition-colors"
                 >
                   Download
                 </a>
+                ) : (
+                  <span className="text-sm text-gray-400 font-medium">No file to download</span>
+                )}
               </div>
             </div>
           )}
