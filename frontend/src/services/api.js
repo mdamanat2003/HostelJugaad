@@ -11,13 +11,38 @@ const api = axios.create({
 });
 
 // Add token to requests if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
+
+// Handle common response errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('hosteljugaad_user');
+        localStorage.removeItem('user');
+        if (window.location.pathname !== '/auth') {
+          window.location.href = '/auth';
+        }
+      }
+    } else if (error.request) {
+      error.message = 'Network error — server is unreachable. Please try again later.';
+    }
+    return Promise.reject(error);
+  }
+);
 
 // ============ AUTH APIs ============
 export const authAPI = {

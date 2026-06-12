@@ -8,9 +8,14 @@ const Navbar = () => {
 
   // Component load hote hi check karein ki koi logged in hai ya nahi
   useEffect(() => {
-    const storedUser = localStorage.getItem('hosteljugaad_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem('hosteljugaad_user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch {
+      localStorage.removeItem('hosteljugaad_user');
+      setUser(null);
     }
   }, []);
 
