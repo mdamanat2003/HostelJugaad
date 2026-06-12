@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { buildFormData } from '../utils/helpers';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -67,25 +68,9 @@ export const itemAPI = {
 
   // Naya item add karne ke liye
   addItem: (itemData, imageFile) => {
-    const formData = new FormData();
-    formData.append('title', itemData.title);
-    formData.append('description', itemData.description);
-    formData.append('category', itemData.category);
-    formData.append('price', itemData.price);
-    formData.append('originalPrice', itemData.originalPrice);
-    formData.append('condition', itemData.condition);
-    formData.append('sellerId', itemData.sellerId);
-    formData.append('sellerName', itemData.sellerName);
-    formData.append('sellerContact', itemData.sellerContact);
-    
-    if (imageFile) {
-      formData.append('image', imageFile);
-    }
-
+    const formData = buildFormData(itemData, imageFile ? { fieldName: 'image', file: imageFile } : null);
     return api.post('/items', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
 
@@ -103,21 +88,9 @@ export const pyqAPI = {
 
   // Naya PYQ upload karne ke liye
   uploadPYQ: (pyqData, file) => {
-    const formData = new FormData();
-    formData.append('subject', pyqData.subject);
-    formData.append('code', pyqData.code);
-    formData.append('examType', pyqData.examType);
-    formData.append('year', pyqData.year);
-    formData.append('uploaderId', pyqData.uploaderId);
-    
-    if (file) {
-      formData.append('file', file);
-    }
-
+    const formData = buildFormData(pyqData, file ? { fieldName: 'file', file } : null);
     return api.post('/pyqs/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
 };

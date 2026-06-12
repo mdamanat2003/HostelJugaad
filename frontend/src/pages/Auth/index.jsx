@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../../services/api';
+import ErrorAlert from '../../components/ui/ErrorAlert';
+import useFormHandler from '../../hooks/useFormHandler';
+
+const INITIAL_FORM = {
+  name: '',
+  collegeName: '',
+  studentType: 'Hosteler',
+  rollNumber: '',
+  hostelBlock: '',
+  roomNumber: '',
+  email: '',
+  password: ''
+};
 
 const Auth = () => {
   // --- LOGIC PART ---
@@ -8,20 +21,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [formData, setFormData] = useState({
-    name: '',
-    collegeName: '',
-    studentType: 'Hosteler',
-    rollNumber: '',
-    hostelBlock: '',
-    roomNumber: '',
-    email: '',
-    password: ''
-  });
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const { formData, handleChange } = useFormHandler(INITIAL_FORM);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,7 +56,7 @@ const Auth = () => {
 
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-12">
-              <span className="text-4xl bg-white rounded-xl p-2 shadow-lg">🎓</span>
+              <span className="text-4xl bg-white rounded-xl p-2 shadow-lg">&#x1F393;</span>
               <span className="font-black text-2xl tracking-tight">Hostel<span className="text-blue-200">Jugaad</span></span>
             </div>
             <h1 className="text-4xl font-extrabold mb-4 leading-tight">Your Campus<br/>Companion</h1>
@@ -76,7 +76,7 @@ const Auth = () => {
             
             {/* Mobile Branding */}
             <div className="md:hidden flex items-center gap-2 mb-8 justify-center">
-              <span className="text-3xl">🎓</span>
+              <span className="text-3xl">&#x1F393;</span>
               <span className="font-black text-2xl text-blue-700">Hostel<span className="text-gray-900">Jugaad</span></span>
             </div>
 
@@ -216,7 +216,7 @@ const Auth = () => {
                 <input 
                   type="password" 
                   name="password"
-                  placeholder="••••••••" 
+                  placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" 
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-medium text-gray-800"
@@ -232,11 +232,7 @@ const Auth = () => {
                 </div>
               )}
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
-                  {error}
-                </div>
-              )}
+              <ErrorAlert message={error} />
 
               <button 
                 type="submit" 
