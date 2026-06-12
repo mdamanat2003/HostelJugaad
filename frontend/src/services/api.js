@@ -101,18 +101,29 @@ export const itemAPI = {
 
 // ============ PYQ APIs ============
 export const pyqAPI = {
-  // Saare PYQs fetch karne ke liye
-  getPYQs: () => api.get('/pyqs'),
+  getPYQs: (filters = {}) => {
+    const params = {};
+    if (filters.course) params.course = filters.course;
+    if (filters.branch) params.branch = filters.branch;
+    if (filters.semester) params.semester = filters.semester;
+    if (filters.year) params.year = filters.year;
+    if (filters.examType) params.examType = filters.examType;
+    if (filters.isSolved !== undefined && filters.isSolved !== '') params.isSolved = filters.isSolved;
+    if (filters.search) params.search = filters.search;
+    return api.get('/pyqs', { params });
+  },
 
-  // Naya PYQ upload karne ke liye
   uploadPYQ: (pyqData, file) => {
     const formData = new FormData();
     formData.append('subject', pyqData.subject);
     formData.append('code', pyqData.code);
+    formData.append('course', pyqData.course || '');
+    formData.append('branch', pyqData.branch || '');
+    formData.append('semester', pyqData.semester || '');
     formData.append('examType', pyqData.examType);
     formData.append('year', pyqData.year);
-    formData.append('uploaderId', pyqData.uploaderId);
-    
+    formData.append('isSolved', pyqData.isSolved || false);
+
     if (file) {
       formData.append('file', file);
     }
@@ -123,6 +134,8 @@ export const pyqAPI = {
       },
     });
   },
+
+  incrementViews: (id) => api.patch(`/pyqs/${id}/view`),
 };
 
 export default api;
