@@ -1,17 +1,20 @@
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import cloudinary from './cloudinary.js'; // Humari purani cloudinary file
+import cloudinary from './cloudinary.js';
 
-// Cloudinary Storage ka setup
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'hosteljugaad_pyqs', // Cloudinary mein is naam ka folder ban jayega
-    allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'], // Sirf yeh files allow hongi
+    folder: 'hosteljugaad_pyqs',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'],
   },
 });
 
-// Multer ko storage pass karna
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10 MB max
+  },
+});
 
 export default upload;

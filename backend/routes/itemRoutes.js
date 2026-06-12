@@ -1,22 +1,17 @@
 import express from 'express';
 import { addItem, getItems, getItemById, deleteItem, markAsSold } from '../controllers/itemController.js';
 import upload from '../config/multer.js';
+import authMiddleware from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Route: POST /api/items (Naya item add karne ke liye)
-router.post('/', upload.single('image'), addItem);
-
-// Route: GET /api/items (Saare items lane ke liye)
+// Public routes
 router.get('/', getItems);
-
-// Route: GET /api/items/:id (Ek specific item lane ke liye)
 router.get('/:id', getItemById);
 
-// Route: PUT /api/items/:id/sold (Item ko sold mark karne ke liye)
-router.put('/:id/sold', markAsSold);
-
-// Route: DELETE /api/items/:id (Item delete karne ke liye)
-router.delete('/:id', deleteItem);
+// Protected routes — require authentication
+router.post('/', authMiddleware, upload.single('image'), addItem);
+router.put('/:id/sold', authMiddleware, markAsSold);
+router.delete('/:id', authMiddleware, deleteItem);
 
 export default router;

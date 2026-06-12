@@ -1,11 +1,17 @@
 # Dependencies
 frontend/node_modules/
 backend/node_modules/
+node_modules/
 
-# Environment files
+# Environment files — NEVER commit .env with real secrets
+.env
 frontend/.env
 backend/.env
 
 # Build folders
 frontend/dist/
 frontend/build/
+
+# Logs
+*.log
+npm-debug.log*
